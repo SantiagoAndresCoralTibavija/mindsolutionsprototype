@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Conversacion activa.
+  El texto manda: la cabecera es delgada, el compositor discreto y todo el
+  peso visual queda en las burbujas.
+-->
+<div th:fragment="page" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div th:hx-get="@{/dashboard/right-panel/chatbot(active=${conversation.uuid})}"
+         hx-trigger="load" hx-target="#right-panel" hx-swap="innerHTML"></div>
+
+    <!-- Cabecera -->
+    <header class="flex items-center gap-3 border-b border-line px-4 py-3 sm:px-6">
+
+        <div class="min-w-0 flex-1">
+            <h1 class="truncate text-lg" th:text="${conversation.title} ?: 'Conversacion con Lia'">
+                Conversacion con Lia
+            </h1>
+            <p class="mt-0.5 text-xs text-ink-faint">
+                <span th:text="${#temporals.format(conversation.createdAt, 'd MMM yyyy')}">4 mar 2026</span>
+                <span aria-hidden="true"> · </span>
+                <span th:text="${#lists.size(conversationContent) - 1} + ' mensajes'">12 mensajes</span>
+            </p>
+        </div>
+
+        <div x-data="{ open: false }" class="relative shrink-0">
+            <button type="button" @click="open = !open" :aria-expanded="open.toString()"
+                    class="btn-icon" aria-label="Opciones de la conversacion">
+                <i data-lucide="more-horizontal" class="h-5 w-5"></i>
+            </button>
+
+            <div x-show="open" @click.away="open = false" x-cloak
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 -translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 class="sheet lift absolute right-0 z-30 mt-1 w-52 overflow-hidden p-1">
+
+                <form th:hx-post="@{/ai/chat/{uuid}/delete(uuid=${conversation.uuid})}"
+                      hx-target="#main-content" hx-swap="innerHTML"
+                      data-confirm="Se borraran todos los mensajes de esta conversacion. No se puede deshacer."
+                      data-confirm-title="¿Eliminar esta conversacion?"
+                      data-confirm-ok="Si, eliminar">
+                    <div th:replace="~{shared/_csrf :: csrf}"></div>
+                    <button type="submit"
+                            class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm
+                                   text-danger transition-colors duration-150 ease-out-quart
+                                   hover:bg-danger-tint">
+                        <i data-lucide="trash-2" class="h-4 w-4"></i>
+                        Eliminar conversacion
+                    </button>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mensajes -->
+    <div id="chat-messages" class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-4 py-6 sm:px-6">
+
+        <th:block th:each="msg : ${conversationContent}"
+                  th:unless="${msg.author.name() == 'SYSTEM'}">
+
+            <div th:if="${msg.author.name() == 'USER'}" class="flex justify-end">
+                <div class="bubble bubble-user" th:text="${msg.text}">Mensaje</div>
+            </div>
+
+            <div th:if="${msg.author.name() == 'AI'}" class="flex justify-start">
+                <div class="bubble bubble-lia" th:text="${msg.text}">Respuesta</div>
+            </div>
+
+        </th:block>
+    </div>
+
+    <!-- Lia escribiendo -->
+    <div id="loading-indicator" class="htmx-indicator px-4 pb-2 sm:px-6">
+        <div class="flex items-center gap-2 text-sm text-ink-faint">
+            <span class="flex gap-1" aria-hidden="true">
+                <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:0ms"></span>
+                <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:180ms"></span>
+                <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:360ms"></span>
+            </span>
+            Lia esta escribiendo
+        </div>
+    </div>
+
+    <!-- Compositor -->
+    <div class="border-t border-line px-4 py-3 sm:px-6">
+        <form th:hx-post="@{/ai/chat/{uuid}(uuid=${conversation.uuid})}"
+              hx-target="#chat-messages"
+              hx-swap="beforeend scroll:bottom"
+              hx-indicator="#loading-indicator"
+              hx-disabled-elt="find button"
+              hx-on::after-request="this.reset()"
+              class="flex items-end gap-2">
+
+            <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+            <label for="chat-input" class="sr-only">Escribe tu mensaje</label>
+            <input type="text" name="prompt" id="chat-input" required autocomplete="off"
+                   placeholder="Escribe..."
+                   class="field flex-1 text-chat">
+
+            <button type="submit" class="btn btn-solid h-[2.875rem] w-[2.875rem] shrink-0 !px-0"
+                    aria-label="Enviar mensaje">
+                <i data-lucide="arrow-up" class="h-5 w-5"></i>
+            </button>
+        </form>
+    </div>
+
+</div>
+
+</body>
+</html>

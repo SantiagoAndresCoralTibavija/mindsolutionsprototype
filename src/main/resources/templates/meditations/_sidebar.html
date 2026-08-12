@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Antes este panel mostraba "7 dias seguidos meditando".
+  Se quito a proposito: una racha castiga justo a quien peor esta, porque
+  romperla el dia malo se lee como fracasar. En una app de salud mental eso
+  hace dano. En su lugar va una nota sin metrica y sin presion.
+-->
+<div th:fragment="panel" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div class="px-4 pb-3 pt-4">
+        <h2 class="text-sm font-semibold text-ink">Antes de empezar</h2>
+    </div>
+
+    <hr class="rule">
+
+    <div class="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 py-5">
+
+        <p class="text-sm text-ink-soft">
+            No hay una forma correcta de hacerlo. Si te distraes, vuelves. Eso
+            tambien es meditar.
+        </p>
+
+        <ul class="flex flex-col gap-3 text-sm text-ink-soft">
+            <li class="flex gap-2.5">
+                <i data-lucide="headphones" class="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden="true"></i>
+                <span>Con audifonos se escucha mejor, pero no es obligatorio.</span>
+            </li>
+            <li class="flex gap-2.5">
+                <i data-lucide="armchair" class="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden="true"></i>
+                <span>Sientate como estes comodo. No hace falta postura especial.</span>
+            </li>
+            <li class="flex gap-2.5">
+                <i data-lucide="pause" class="mt-0.5 h-4 w-4 shrink-0 text-sage" aria-hidden="true"></i>
+                <span>Puedes parar cuando quieras. Nadie lleva la cuenta.</span>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+</body>
+</html>

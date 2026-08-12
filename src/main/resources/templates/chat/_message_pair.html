@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Par de mensajes que se agrega al final del chat tras cada envio.
+  Las clases coinciden exactamente con las de conversation.html para que un
+  mensaje recien llegado sea indistinguible de uno cargado con el historial.
+-->
+<th:block th:fragment="pair">
+
+    <div class="flex justify-end">
+        <div class="bubble bubble-user" th:text="${userMessage}">Mensaje del usuario</div>
+    </div>
+
+    <div class="flex justify-start">
+        <div class="bubble bubble-lia rise" th:text="${aiMessage}">Respuesta de Lia</div>
+    </div>
+
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,797 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   MindSolutions — sistema visual "refugio calido"
+   Ver .impeccable.md para el contexto completo.
+
+   Reglas de esta hoja:
+   - Color en OKLCH. Es perceptualmente uniforme: dos pasos iguales de
+     luminosidad se ven iguales, cosa que HSL no cumple.
+   - Los neutros van tintados hacia el naranja de la arcilla. Nunca gris puro,
+     nunca blanco puro, nunca negro puro.
+   - La profundidad sale del TONO y de bordes de 1px, no de sombras difusas.
+   - Tema claro y oscuro completos, segun preferencia del sistema. El oscuro es
+     marron-carbon, no azul-negro, y no lleva glow.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Fuentes autoalojadas (npm run vendor las copia a static/fonts/)
+
+   Petrona    display, variable — serif calido, de Huerta Tipografica
+   Alegreya Sans  cuerpo — humanista, pensada para leer texto largo
+
+   Ninguna de las dos se pide a Google: ademas de no depender de un tercero,
+   evita revelarle a ese tercero la IP de quien entra a una app de salud mental.
+   -------------------------------------------------------------------------- */
+
+@font-face {
+    font-family: 'Petrona';
+    src: url('/fonts/petrona-var.woff2') format('woff2-variations');
+    font-weight: 300 800;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Alegreya Sans';
+    src: url('/fonts/alegreya-sans-400.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Alegreya Sans';
+    src: url('/fonts/alegreya-sans-400-italic.woff2') format('woff2');
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Alegreya Sans';
+    src: url('/fonts/alegreya-sans-500.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Alegreya Sans';
+    src: url('/fonts/alegreya-sans-700.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+
+@layer base {
+
+    /* ----------------------------------------------------------------------
+       Tema claro — papel de avena
+       ---------------------------------------------------------------------- */
+    :root {
+        --paper:        oklch(0.972 0.012 78);
+        --paper-raised: oklch(0.990 0.008 80);
+        --paper-sunken: oklch(0.943 0.017 76);
+
+        --ink:          oklch(0.255 0.028 55);
+        --ink-soft:     oklch(0.435 0.026 55);
+        --ink-faint:    oklch(0.545 0.024 60);
+
+        --line:         oklch(0.882 0.018 74);
+        --line-strong:  oklch(0.795 0.024 72);
+
+        /* Arcilla: el unico acento. Funciona porque es escaso. */
+        --clay:         oklch(0.510 0.132 45);
+        --clay-hover:   oklch(0.440 0.124 44);
+        --clay-tint:    oklch(0.946 0.032 50);
+        --clay-line:    oklch(0.855 0.058 48);
+        --on-clay:      oklch(0.985 0.010 80);
+
+        /* Salvia: apoyo, estados de calma. Nunca compite con la arcilla. */
+        --sage:         oklch(0.455 0.062 152);
+        --sage-tint:    oklch(0.936 0.030 150);
+        --sage-line:    oklch(0.845 0.048 150);
+
+        --danger:       oklch(0.505 0.152 27);
+        --danger-tint:  oklch(0.948 0.030 30);
+
+        /* La textura del papel se multiplica sobre el fondo claro. */
+        --grain-blend:   multiply;
+        --grain-opacity: 0.055;
+
+        color-scheme: light;
+    }
+
+    /* ----------------------------------------------------------------------
+       Tema oscuro — noche calida.
+       Marron-carbon, no azul-negro. Sin glow, sin neon.
+       El acento sube de luminosidad y BAJA de croma: mucho croma sobre fondo
+       oscuro se ve chillon.
+       ---------------------------------------------------------------------- */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --paper:        oklch(0.208 0.014 62);
+            --paper-raised: oklch(0.256 0.016 64);
+            --paper-sunken: oklch(0.166 0.012 60);
+
+            --ink:          oklch(0.945 0.014 80);
+            --ink-soft:     oklch(0.788 0.016 74);
+            --ink-faint:    oklch(0.652 0.016 70);
+
+            --line:         oklch(0.318 0.016 64);
+            --line-strong:  oklch(0.412 0.020 64);
+
+            --clay:         oklch(0.742 0.104 54);
+            --clay-hover:   oklch(0.802 0.090 56);
+            --clay-tint:    oklch(0.296 0.044 48);
+            --clay-line:    oklch(0.398 0.058 48);
+            --on-clay:      oklch(0.205 0.030 50);
+
+            --sage:         oklch(0.748 0.056 152);
+            --sage-tint:    oklch(0.285 0.032 150);
+            --sage-line:    oklch(0.372 0.040 150);
+
+            --danger:       oklch(0.712 0.118 28);
+            --danger-tint:  oklch(0.298 0.048 28);
+
+            /* Sobre fondo oscuro el grano tiene que aclarar, no oscurecer. */
+            --grain-blend:   screen;
+            --grain-opacity: 0.030;
+
+            color-scheme: dark;
+        }
+    }
+
+    /* ----------------------------------------------------------------------
+       Base
+       ---------------------------------------------------------------------- */
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        background-color: var(--paper);
+        color: var(--ink);
+        font-family: 'Alegreya Sans', ui-sans-serif, system-ui, sans-serif;
+        font-size: 1rem;
+        line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    /*
+     * Grano de papel. Es la fuente principal del caracter "textil": una capa
+     * fija, muy tenue, que le quita al fondo el aspecto de plano digital.
+     * Va en un pseudo-elemento con pointer-events:none para no estorbar.
+     */
+    body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: 0;
+        pointer-events: none;
+        opacity: var(--grain-opacity);
+        mix-blend-mode: var(--grain-blend);
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Todo el contenido vive por encima del grano. */
+    body > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    h1, h2, h3, h4 {
+        font-family: 'Petrona', ui-serif, Georgia, serif;
+        font-weight: 600;
+        line-height: 1.15;
+        letter-spacing: -0.011em;
+        color: var(--ink);
+        text-wrap: balance;
+    }
+
+    /* Foco visible y consistente. Nunca se quita sin reemplazo. */
+    :focus-visible {
+        outline: 2px solid var(--clay);
+        outline-offset: 2px;
+        border-radius: 3px;
+    }
+
+    ::selection {
+        background: var(--clay-tint);
+        color: var(--ink);
+    }
+
+    /*
+     * Alpine todavia no ha arrancado cuando el HTML ya se pinto. Sin esto,
+     * los menus marcados con x-show aparecen un instante antes de ocultarse.
+     */
+    [x-cloak] {
+        display: none !important;
+    }
+
+    /* Barras de scroll discretas, en el tono del papel. */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: var(--line-strong) transparent;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: var(--line-strong);
+        border-radius: 99px;
+        border: 3px solid transparent;
+        background-clip: content-box;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    /*
+     * Autofill: Chrome pinta un amarillo fijo que rompe los dos temas.
+     * La sombra interior gigante es la unica forma fiable de taparlo.
+     */
+    input:-webkit-autofill,
+    input:-webkit-autofill:focus {
+        -webkit-box-shadow: 0 0 0 100px var(--paper-sunken) inset;
+        -webkit-text-fill-color: var(--ink);
+        caret-color: var(--ink);
+    }
+}
+
+
+@layer components {
+
+    /* ----------------------------------------------------------------------
+       Superficies
+       ---------------------------------------------------------------------- */
+
+    /* Hoja de papel: la unidad basica. Borde de 1px, sin sombra. */
+    .sheet {
+        background-color: var(--paper-raised);
+        border: 1px solid var(--line);
+        border-radius: 1rem;
+    }
+
+    /* Zona hundida: campos, listas, areas de lectura. */
+    .well {
+        background-color: var(--paper-sunken);
+        border: 1px solid var(--line);
+    }
+
+    /* Regla horizontal fina. Separa sin gritar. */
+    .rule {
+        border: 0;
+        border-top: 1px solid var(--line);
+    }
+
+    /* ----------------------------------------------------------------------
+       Botones — jerarquia real: solido, contorno, silencioso
+       ---------------------------------------------------------------------- */
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.625rem 1.125rem;
+        border-radius: 0.625rem;
+        border: 1px solid transparent;
+        font-weight: 500;
+        font-size: 0.9375rem;
+        line-height: 1.2;
+        cursor: pointer;
+        transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    .btn-solid {
+        background-color: var(--clay);
+        color: var(--on-clay);
+    }
+
+    .btn-solid:hover:not(:disabled) {
+        background-color: var(--clay-hover);
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        border-color: var(--line-strong);
+        color: var(--ink);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+        background-color: var(--paper-sunken);
+        border-color: var(--ink-faint);
+    }
+
+    .btn-quiet {
+        background-color: transparent;
+        color: var(--ink-soft);
+    }
+
+    .btn-quiet:hover:not(:disabled) {
+        background-color: var(--paper-sunken);
+        color: var(--ink);
+    }
+
+    .btn-danger {
+        background-color: transparent;
+        color: var(--danger);
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background-color: var(--danger-tint);
+    }
+
+    /* Boton de icono cuadrado. */
+    .btn-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 0.5rem;
+        color: var(--ink-soft);
+        transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .btn-icon:hover {
+        background-color: var(--paper-sunken);
+        color: var(--ink);
+    }
+
+    /* ----------------------------------------------------------------------
+       Campos de formulario
+       ---------------------------------------------------------------------- */
+
+    .field {
+        width: 100%;
+        padding: 0.625rem 0.875rem;
+        background-color: var(--paper-sunken);
+        border: 1px solid var(--line-strong);
+        border-radius: 0.625rem;
+        color: var(--ink);
+        font-size: 1rem;
+        line-height: 1.4;
+        transition: border-color 160ms ease-out, background-color 160ms ease-out;
+    }
+
+    .field::placeholder {
+        color: var(--ink-faint);
+    }
+
+    .field:hover {
+        border-color: var(--ink-faint);
+    }
+
+    .field:focus {
+        outline: none;
+        background-color: var(--paper-raised);
+        border-color: var(--clay);
+        box-shadow: 0 0 0 3px var(--clay-tint);
+    }
+
+    .label {
+        display: block;
+        font-size: 0.8125rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
+        color: var(--ink-soft);
+        margin-bottom: 0.375rem;
+    }
+
+    /* ----------------------------------------------------------------------
+       Etiquetas de estado.
+       Nunca solo color: siempre llevan texto, y forma distinta entre si.
+       ---------------------------------------------------------------------- */
+
+    .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3125rem;
+        padding: 0.1875rem 0.5rem;
+        border-radius: 0.375rem;
+        border: 1px solid;
+        font-size: 0.75rem;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+    }
+
+    .tag-clay {
+        background-color: var(--clay-tint);
+        border-color: var(--clay-line);
+        color: var(--clay);
+    }
+
+    .tag-sage {
+        background-color: var(--sage-tint);
+        border-color: var(--sage-line);
+        color: var(--sage);
+    }
+
+    .tag-plain {
+        background-color: transparent;
+        border-color: var(--line-strong);
+        color: var(--ink-soft);
+    }
+
+    .tag-danger {
+        background-color: var(--danger-tint);
+        border-color: var(--danger);
+        color: var(--danger);
+    }
+
+    /* ----------------------------------------------------------------------
+       Chat — el producto real. Todo lo demas le cede peso visual.
+       ---------------------------------------------------------------------- */
+
+    /*
+     * Las burbujas usan radio asimetrico: la esquina del lado de quien habla
+     * va mas cerrada. Es el mismo gesto que hace una cola de globo de comic,
+     * pero sin dibujarla.
+     */
+    .bubble {
+        max-width: min(65ch, 82%);
+        padding: 0.75rem 1rem;
+        font-size: 1.0625rem;
+        line-height: 1.62;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    .bubble-user {
+        background-color: var(--clay);
+        color: var(--on-clay);
+        border-radius: 1rem 0.25rem 1rem 1rem;
+    }
+
+    .bubble-lia {
+        background-color: var(--paper-raised);
+        border: 1px solid var(--line);
+        color: var(--ink);
+        border-radius: 0.25rem 1rem 1rem 1rem;
+    }
+
+    /* ----------------------------------------------------------------------
+       Navegacion lateral
+       ---------------------------------------------------------------------- */
+
+    .nav-button {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.75rem;
+        color: var(--ink-faint);
+        transition: color 200ms cubic-bezier(0.22, 1, 0.36, 1),
+        background-color 200ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nav-button:hover {
+        color: var(--ink);
+        background-color: var(--paper-sunken);
+    }
+
+    .nav-button[data-active='true'] {
+        color: var(--clay);
+        background-color: var(--clay-tint);
+    }
+
+    /*
+     * El indicador de seccion activa es una marca vertical a la IZQUIERDA del
+     * boton, como una pestania de cuaderno. Es un pseudo-elemento posicionado,
+     * no un border-left en la tarjeta.
+     */
+    .nav-button[data-active='true']::before {
+        content: '';
+        position: absolute;
+        left: -0.625rem;
+        top: 50%;
+        width: 3px;
+        height: 1.25rem;
+        border-radius: 99px;
+        background-color: var(--clay);
+        transform: translateY(-50%);
+    }
+
+    /* Elemento de lista de conversaciones. */
+    .conv-item {
+        display: block;
+        width: 100%;
+        text-align: left;
+        padding: 0.6875rem 0.75rem;
+        border-radius: 0.625rem;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .conv-item:hover {
+        background-color: var(--paper-sunken);
+        border-color: var(--line);
+    }
+
+    .conv-item[data-active='true'] {
+        background-color: var(--clay-tint);
+        border-color: var(--clay-line);
+    }
+
+    /* ----------------------------------------------------------------------
+       Etiqueta pequenia en versalitas. Para metadatos, nunca para texto largo.
+       ---------------------------------------------------------------------- */
+
+    .overline {
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+    }
+
+    /* ----------------------------------------------------------------------
+       Pastillas de contorno: frases de arranque del chat y sonidos ambiente.
+       No compiten con el boton principal porque no tienen relleno.
+       ---------------------------------------------------------------------- */
+
+    .starter,
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.75rem;
+        border-radius: 99px;
+        border: 1px solid var(--line-strong);
+        background-color: transparent;
+        color: var(--ink-soft);
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        cursor: pointer;
+        transition: background-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        border-color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        color 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .starter:hover,
+    .chip:hover {
+        background-color: var(--clay-tint);
+        border-color: var(--clay-line);
+        color: var(--clay);
+    }
+
+    /* ----------------------------------------------------------------------
+       Pestanias del panel de administracion.
+       El subrayado activo va con box-shadow interior y no con border-bottom,
+       para que activar una pestania no desplace el texto un pixel.
+       ---------------------------------------------------------------------- */
+
+    .admin-tab {
+        position: relative;
+        margin-bottom: -1px;
+        padding: 0.625rem 0.875rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--ink-faint);
+        background: transparent;
+        cursor: pointer;
+        box-shadow: inset 0 -2px 0 transparent;
+        transition: color 180ms cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .admin-tab:hover {
+        color: var(--ink);
+    }
+
+    .admin-tab[data-active='true'] {
+        color: var(--clay);
+        box-shadow: inset 0 -2px 0 var(--clay);
+    }
+
+    /* ----------------------------------------------------------------------
+       Celdas de tabla
+       ---------------------------------------------------------------------- */
+
+    .th {
+        padding: 0.625rem 1rem;
+        text-align: left;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+        white-space: nowrap;
+    }
+
+    .td {
+        padding: 0.75rem 1rem;
+        vertical-align: middle;
+    }
+
+    /* ----------------------------------------------------------------------
+       Slider de volumen de los reproductores de meditacion
+       ---------------------------------------------------------------------- */
+
+    .styled-slider {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 100%;
+        height: 4px;
+        border-radius: 99px;
+        outline: none;
+        background: var(--line);
+        cursor: pointer;
+    }
+
+    .styled-slider::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--clay);
+        border: 2px solid var(--paper-raised);
+        cursor: pointer;
+    }
+
+    .styled-slider::-moz-range-thumb {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--clay);
+        border: 2px solid var(--paper-raised);
+        cursor: pointer;
+    }
+
+    /* ----------------------------------------------------------------------
+       SweetAlert vestido con el tema.
+       Su aspecto por defecto (azul, sombra difusa, esquinas muy redondeadas)
+       rompe la atmosfera; se reemplaza por la misma hoja de papel del resto.
+       ---------------------------------------------------------------------- */
+
+    .ms-toast.swal2-popup,
+    .ms-dialog.swal2-popup {
+        background-color: var(--paper-raised);
+        border: 1px solid var(--line);
+        border-radius: 0.875rem;
+        color: var(--ink);
+        font-family: 'Alegreya Sans', ui-sans-serif, system-ui, sans-serif;
+        box-shadow: 0 1px 2px oklch(0.25 0.03 55 / 0.06),
+        0 8px 24px oklch(0.25 0.03 55 / 0.12);
+    }
+
+    .ms-dialog .swal2-title {
+        color: var(--ink);
+        font-family: 'Petrona', ui-serif, Georgia, serif;
+        font-weight: 600;
+    }
+
+    .ms-toast .swal2-title {
+        color: var(--ink);
+        font-size: 0.9375rem;
+        font-weight: 500;
+        text-align: left;
+    }
+
+    .ms-dialog .swal2-html-container {
+        color: var(--ink-soft);
+    }
+
+    .ms-toast .swal2-timer-progress-bar {
+        background: var(--clay);
+    }
+
+    .ms-dialog-confirm,
+    .ms-dialog-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 0.25rem;
+        padding: 0.5625rem 1.125rem;
+        border: 1px solid transparent;
+        border-radius: 0.625rem;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        cursor: pointer;
+    }
+
+    .ms-dialog-confirm {
+        background-color: var(--danger);
+        color: var(--paper-raised);
+    }
+
+    .ms-dialog-cancel {
+        background-color: transparent;
+        border-color: var(--line-strong);
+        color: var(--ink-soft);
+    }
+
+    .ms-dialog-cancel:hover {
+        background-color: var(--paper-sunken);
+        color: var(--ink);
+    }
+}
+
+
+@layer utilities {
+
+    /* Ancho comodo de lectura. */
+    .measure {
+        max-width: 68ch;
+    }
+
+    /*
+     * Entrada escalonada. Se usa UNA vez por carga de pantalla, no en cada
+     * elemento: el movimiento explica que llego contenido nuevo, y ya.
+     */
+    .rise {
+        animation: rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    .rise-1 { animation-delay: 40ms; }
+    .rise-2 { animation-delay: 90ms; }
+    .rise-3 { animation-delay: 140ms; }
+
+    @keyframes rise {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* Los tres puntos de "Lia esta pensando". */
+    .breath {
+        animation: breath 1400ms ease-in-out infinite;
+    }
+
+    @keyframes breath {
+        0%, 100% { opacity: 0.25; transform: translateY(0); }
+        50%      { opacity: 1;    transform: translateY(-3px); }
+    }
+
+    /* Sombra unica del sistema, reservada a lo que de verdad flota. */
+    .lift {
+        box-shadow: 0 1px 2px oklch(0.25 0.03 55 / 0.06),
+        0 8px 24px oklch(0.25 0.03 55 / 0.10);
+    }
+}
+
+
+/* --------------------------------------------------------------------------
+   Movimiento reducido. No es un extra: para parte de esta audiencia el
+   movimiento es un sintoma, no un adorno.
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

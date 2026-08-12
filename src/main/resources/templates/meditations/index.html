@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Meditaciones.
+
+  Antes el reproductor solo se desplegaba con :hover, o sea que en un telefono
+  era inalcanzable. Ahora se abre con un boton explicito, que funciona con dedo
+  y con teclado. La altura se anima con grid-template-rows (0fr -> 1fr) en vez
+  de max-height: no hay que adivinar un maximo y no salta al final.
+
+  Los id de los controles (audio1, playPause1, volumen1, ...) los usa
+  meditations.js tal cual: no se renombran.
+-->
+<div th:fragment="page" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div hx-get="/dashboard/right-panel/meditations" hx-trigger="load"
+         hx-target="#right-panel" hx-swap="innerHTML"></div>
+
+    <header class="px-4 pb-4 pt-5 sm:px-6">
+        <h1 class="text-xl">Meditaciones</h1>
+        <p class="mt-1 text-sm text-ink-soft">Audios guiados. Puedes parar cuando quieras.</p>
+    </header>
+
+    <hr class="rule">
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+        <div class="measure flex flex-col gap-3">
+
+            <!-- ============ Sesion 1 ============ -->
+            <article x-data="{ open: false }" class="well overflow-hidden rounded-xl">
+
+                <button type="button" @click="open = !open" :aria-expanded="open.toString()"
+                        aria-controls="player-1"
+                        class="flex w-full items-center gap-4 px-4 py-4 text-left transition-colors
+                               duration-200 ease-out-quart hover:bg-paper-raised">
+
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full
+                                 border border-sage-line bg-sage-tint text-sage">
+                        <i data-lucide="sprout" class="h-5 w-5"></i>
+                    </span>
+
+                    <span class="min-w-0 flex-1">
+                        <span class="block font-display text-lg font-semibold text-ink">Iniciacion</span>
+                        <span class="block text-sm text-ink-soft">¿Primera vez meditando?</span>
+                    </span>
+
+                    <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-ink-faint transition-transform
+                                                         duration-300 ease-out-quart"
+                       :class="open && 'rotate-180'"></i>
+                </button>
+
+                <div id="player-1" class="grid transition-[grid-template-rows] duration-400 ease-out-quart"
+                     :class="open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'">
+                    <div class="overflow-hidden">
+                        <div class="border-t border-line px-4 py-4">
+
+                            <p class="text-sm text-ink-soft">
+                                Una sesion guiada para quien nunca ha meditado. Dejate llevar por la
+                                voz y no te exijas nada.
+                            </p>
+
+                            <p class="mt-3 text-xs text-ink-faint">
+                                Meditacion para principiantes · CuriosaMente
+                            </p>
+
+                            <!-- Progreso -->
+                            <div class="mt-5">
+                                <div class="h-1 w-full overflow-hidden rounded-full bg-line">
+                                    <div id="progress1" class="h-full rounded-full bg-clay" style="width: 0%"></div>
+                                </div>
+                                <div class="mt-1.5 flex justify-between text-xs tabular-nums text-ink-faint">
+                                    <span id="currentTime1">0:00</span>
+                                    <span id="songLength1">0:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Transporte -->
+                            <div class="mt-4 flex items-center justify-center gap-3">
+                                <button id="back10_1" type="button" class="btn-icon" aria-label="Retroceder 10 segundos">
+                                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                                </button>
+
+                                <button id="playPause1" type="button"
+                                        class="flex h-12 w-12 items-center justify-center rounded-full bg-clay
+                                               text-clay-on transition-colors duration-200 ease-out-quart
+                                               hover:bg-clay-hover"
+                                        aria-label="Reproducir o pausar">
+                                    <i data-lucide="play" class="h-6 w-6"></i>
+                                </button>
+
+                                <button id="plus10_1" type="button" class="btn-icon" aria-label="Avanzar 10 segundos">
+                                    <i data-lucide="rotate-cw" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+
+                            <!-- Volumen -->
+                            <div class="mt-5 flex items-center gap-3">
+                                <i data-lucide="volume-2" class="h-4 w-4 shrink-0 text-ink-faint" aria-hidden="true"></i>
+                                <label for="volumen1" class="sr-only">Volumen</label>
+                                <input type="range" min="0" max="100" value="50" id="volumen1" class="styled-slider flex-1">
+                                <span id="volumenValue1" class="w-7 text-right text-xs tabular-nums text-ink-faint">50</span>
+                            </div>
+
+                            <!-- Ambiente -->
+                            <div class="mt-5">
+                                <p class="overline">Sonido de fondo</p>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <button id="lluvia1" type="button" class="chip">
+                                        <i data-lucide="cloud-rain" class="h-3.5 w-3.5"></i> Lluvia
+                                    </button>
+                                    <button id="viento1" type="button" class="chip">
+                                        <i data-lucide="wind" class="h-3.5 w-3.5"></i> Viento
+                                    </button>
+                                    <button id="naturaleza1" type="button" class="chip">
+                                        <i data-lucide="trees" class="h-3.5 w-3.5"></i> Bosque
+                                    </button>
+                                    <button id="stop1" type="button" class="chip" aria-label="Quitar sonido de fondo">
+                                        <i data-lucide="volume-x" class="h-3.5 w-3.5"></i> Silencio
+                                    </button>
+                                </div>
+                            </div>
+
+                            <audio id="audio1" src="/audio/Sesion-Iniciacion.mp3" preload="metadata" class="hidden"></audio>
+                            <audio id="rainsfx1" src="/audio/Rain-SFX.mp3" loop class="hidden"></audio>
+                            <audio id="windsfx1" src="/audio/Wind-SFX.mp3" loop class="hidden"></audio>
+                            <audio id="naturesfx1" src="/audio/Nature-SFX.mp3" loop class="hidden"></audio>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ============ Sesion 2 ============ -->
+            <article x-data="{ open: false }" class="well overflow-hidden rounded-xl">
+
+                <button type="button" @click="open = !open" :aria-expanded="open.toString()"
+                        aria-controls="player-2"
+                        class="flex w-full items-center gap-4 px-4 py-4 text-left transition-colors
+                               duration-200 ease-out-quart hover:bg-paper-raised">
+
+                    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full
+                                 border border-clay-line bg-clay-tint text-clay">
+                        <i data-lucide="sunrise" class="h-5 w-5"></i>
+                    </span>
+
+                    <span class="min-w-0 flex-1">
+                        <span class="block font-display text-lg font-semibold text-ink">Comienzo del dia</span>
+                        <span class="block text-sm text-ink-soft">Para arrancar con otra actitud</span>
+                    </span>
+
+                    <i data-lucide="chevron-down" class="h-4 w-4 shrink-0 text-ink-faint transition-transform
+                                                         duration-300 ease-out-quart"
+                       :class="open && 'rotate-180'"></i>
+                </button>
+
+                <div id="player-2" class="grid transition-[grid-template-rows] duration-400 ease-out-quart"
+                     :class="open ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'">
+                    <div class="overflow-hidden">
+                        <div class="border-t border-line px-4 py-4">
+
+                            <p class="text-sm text-ink-soft">
+                                Empieza el dia agradeciendo lo que tienes y sueltate las cadenas que
+                                te frenan al levantarte.
+                            </p>
+
+                            <p class="mt-3 text-xs text-ink-faint">
+                                Gratitud para comenzar el dia · Mindful Science
+                            </p>
+
+                            <div class="mt-5">
+                                <div class="h-1 w-full overflow-hidden rounded-full bg-line">
+                                    <div id="progress2" class="h-full rounded-full bg-clay" style="width: 0%"></div>
+                                </div>
+                                <div class="mt-1.5 flex justify-between text-xs tabular-nums text-ink-faint">
+                                    <span id="currentTime2">0:00</span>
+                                    <span id="songLength2">0:00</span>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 flex items-center justify-center gap-3">
+                                <button id="back10_2" type="button" class="btn-icon" aria-label="Retroceder 10 segundos">
+                                    <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+                                </button>
+
+                                <button id="playPause2" type="button"
+                                        class="flex h-12 w-12 items-center justify-center rounded-full bg-clay
+                                               text-clay-on transition-colors duration-200 ease-out-quart
+                                               hover:bg-clay-hover"
+                                        aria-label="Reproducir o pausar">
+                                    <i data-lucide="play" class="h-6 w-6"></i>
+                                </button>
+
+                                <button id="plus10_2" type="button" class="btn-icon" aria-label="Avanzar 10 segundos">
+                                    <i data-lucide="rotate-cw" class="h-4 w-4"></i>
+                                </button>
+                            </div>
+
+                            <div class="mt-5 flex items-center gap-3">
+                                <i data-lucide="volume-2" class="h-4 w-4 shrink-0 text-ink-faint" aria-hidden="true"></i>
+                                <label for="volumen2" class="sr-only">Volumen</label>
+                                <input type="range" min="0" max="100" value="50" id="volumen2" class="styled-slider flex-1">
+                                <span id="volumenValue2" class="w-7 text-right text-xs tabular-nums text-ink-faint">50</span>
+                            </div>
+
+                            <div class="mt-5">
+                                <p class="overline">Sonido de fondo</p>
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <button id="lluvia2" type="button" class="chip">
+                                        <i data-lucide="cloud-rain" class="h-3.5 w-3.5"></i> Lluvia
+                                    </button>
+                                    <button id="viento2" type="button" class="chip">
+                                        <i data-lucide="wind" class="h-3.5 w-3.5"></i> Viento
+                                    </button>
+                                    <button id="naturaleza2" type="button" class="chip">
+                                        <i data-lucide="trees" class="h-3.5 w-3.5"></i> Bosque
+                                    </button>
+                                    <button id="stop2" type="button" class="chip" aria-label="Quitar sonido de fondo">
+                                        <i data-lucide="volume-x" class="h-3.5 w-3.5"></i> Silencio
+                                    </button>
+                                </div>
+                            </div>
+
+                            <audio id="audio2" src="/audio/Inicio-Dia.mp3" preload="metadata" class="hidden"></audio>
+                            <audio id="rainsfx2" src="/audio/Rain-SFX.mp3" loop class="hidden"></audio>
+                            <audio id="windsfx2" src="/audio/Wind-SFX.mp3" loop class="hidden"></audio>
+                            <audio id="naturesfx2" src="/audio/Nature-SFX.mp3" loop class="hidden"></audio>
+                        </div>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

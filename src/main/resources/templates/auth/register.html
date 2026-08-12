@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Registro')}"></head>
+
+<body class="h-full">
+
+<div class="grid min-h-full lg:grid-cols-[1.1fr_1fr]">
+
+    <section class="relative hidden flex-col justify-between bg-paper-sunken px-12 py-14 lg:flex">
+
+        <p class="font-display text-lg font-semibold text-clay">MindSolutions</p>
+
+        <div class="measure">
+            <h1 class="text-3xl">
+                Empieza cuando quieras. Sin apuro.
+            </h1>
+            <p class="mt-5 text-lg text-ink-soft">
+                Solo necesitas un correo y un nombre para que te llamemos de alguna
+                manera. Nada mas.
+            </p>
+        </div>
+
+        <p class="text-xs text-ink-faint">
+            Bienestar estudiantil · Universidad
+        </p>
+    </section>
+
+    <section class="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-14">
+
+        <div class="w-full max-w-sm">
+
+            <p class="font-display text-lg font-semibold text-clay lg:hidden">MindSolutions</p>
+
+            <h2 class="rise rise-1 mt-6 text-2xl lg:mt-0">Crea tu cuenta</h2>
+            <p class="rise rise-1 mt-2 text-ink-soft">Toma menos de un minuto.</p>
+
+            <form class="rise rise-2 mt-8 flex flex-col gap-4"
+                  th:action="@{/register}" method="post" th:object="${RegisterDTO}"
+                  hx-post="/register" hx-target="#alert-container" hx-swap="innerHTML"
+                  hx-disabled-elt="find button"
+                  x-data="{ show: false }">
+
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+                <div>
+                    <label for="user" class="label">¿Como quieres que te llamemos?</label>
+                    <input id="user" name="user" type="text" required th:field="*{user}"
+                           class="field" placeholder="Puede ser tu nombre o un alias">
+                    <p class="mt-1.5 text-xs text-ink-faint">
+                        Es lo unico que se muestra en la aplicacion. No tiene que ser tu nombre real.
+                    </p>
+                </div>
+
+                <div>
+                    <label for="email" class="label">Correo institucional</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           th:field="*{email}" class="field" placeholder="nombre@universidad.edu.co">
+                </div>
+
+                <div>
+                    <label for="password" class="label">Contrasena</label>
+                    <div class="relative">
+                        <input id="password" name="password" autocomplete="new-password" required
+                               :type="show ? 'text' : 'password'"
+                               th:field="*{password}" class="field pr-11">
+                        <button type="button" @click="show = !show"
+                                class="btn-icon absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                                :aria-label="show ? 'Ocultar contrasena' : 'Mostrar contrasena'">
+                            <i data-lucide="eye" class="h-4 w-4" x-show="!show"></i>
+                            <i data-lucide="eye-off" class="h-4 w-4" x-show="show" x-cloak></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="confirmpassword" class="label">Repite la contrasena</label>
+                    <input id="confirmpassword" name="confirmpassword" type="password"
+                           autocomplete="new-password" required class="field">
+                </div>
+
+                <div id="alert-container" aria-live="polite"></div>
+
+                <button type="submit" class="btn btn-solid mt-1 w-full">Crear cuenta</button>
+            </form>
+
+            <p class="rise rise-3 mt-8 text-sm text-ink-soft">
+                ¿Ya tienes cuenta?
+                <a th:href="@{/ingreso}"
+                   class="font-medium text-clay underline decoration-clay-line underline-offset-4
+                          transition-colors duration-150 ease-out-quart hover:decoration-clay">
+                    Inicia sesion
+                </a>
+            </p>
+        </div>
+    </section>
+
+</div>
+
+<div th:replace="~{layout/base :: scripts}"></div>
+
+</body>
+</html>

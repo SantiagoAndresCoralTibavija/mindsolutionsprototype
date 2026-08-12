@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<!--
+  Layout base. Unico lugar donde se declaran <head>, assets y scripts globales.
+
+  Uso desde una pagina:
+      <head th:replace="~{layout/base :: head('Titulo')}"></head>
+      ...
+      <div th:replace="~{layout/base :: scripts}"></div>
+-->
+
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' · MindSolutions'">MindSolutions</title>
+
+    <!-- La barra del navegador acompania el tema; si no, el movil "corta" la pagina. -->
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f1e8">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#29221e">
+
+    <!--
+      Las dos fuentes se precargan: son el primer trazo de identidad que ve el
+      usuario y no queremos el parpadeo a la fuente del sistema.
+    -->
+    <link rel="preload" href="/fonts/petrona-var.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/alegreya-sans-400.woff2" as="font" type="font/woff2" crossorigin>
+
+    <link th:href="@{/css/output.css}" rel="stylesheet">
+
+    <script defer th:src="@{/vendor/alpine.min.js}"></script>
+    <script th:src="@{/vendor/htmx.min.js}"></script>
+    <script th:src="@{/vendor/lucide.min.js}"></script>
+    <script th:src="@{/vendor/sweetalert2.min.js}"></script>
+</head>
+
+<body>
+
+<!--
+  Scripts globales. Se cargan UNA sola vez por pagina completa.
+  Nunca meta <script> dentro de un fragmento htmx: cada swap volveria a
+  registrar los listeners y se acumularian sin liberarse nunca.
+-->
+<th:block th:fragment="scripts">
+    <script th:src="@{/js/app.js}"></script>
+    <script th:src="@{/js/meditations.js}"></script>
+</th:block>
+
+</body>
+</html>

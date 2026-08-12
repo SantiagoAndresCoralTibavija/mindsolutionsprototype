@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Respuesta vacia. Se usa cuando el controlador ya resolvio todo via cabecera
+  (por ejemplo HX-Redirect) y no hay nada que pintar. Evita que Spring intente
+  adivinar un nombre de vista a partir de la URL cuando el handler devuelve null.
+-->
+<th:block th:fragment="empty"></th:block>
+
+</body>
+</html>

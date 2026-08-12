@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Dos formas de avisar, segun donde caiga la respuesta:
+
+  :: inline  para formularios que tienen su propio contenedor de mensajes
+             (ingreso, registro). Es la mejor opcion: el error aparece al lado
+             del campo que lo causo y no interrumpe.
+
+  :: toast   para acciones que repintan otra cosa (tabla de admin, chat) y no
+             tienen donde poner un mensaje. Aviso no bloqueante en una esquina,
+             nunca un modal: un modal para "revise los datos" es desmedido.
+-->
+
+<th:block th:fragment="inline">
+    <div role="alert"
+         class="flex items-start gap-2 rounded-lg border border-danger bg-danger-tint px-3 py-2.5">
+        <i data-lucide="alert-circle" class="mt-0.5 h-4 w-4 shrink-0 text-danger" aria-hidden="true"></i>
+        <p class="text-sm text-danger" th:text="${message}">Ocurrio un problema</p>
+    </div>
+</th:block>
+
+<th:block th:fragment="toast">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.msToast(/*[[${message}]]*/ 'Ocurrio un problema', 'error');
+        /*]]>*/
+    </script>
+</th:block>
+
+<th:block th:fragment="toast-info">
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        window.msToast(/*[[${message}]]*/ 'Revise los datos ingresados', 'info');
+        /*]]>*/
+    </script>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="panel" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div class="px-4 pb-3 pt-4">
+        <h2 class="text-sm font-semibold text-ink">Como funciona</h2>
+    </div>
+
+    <hr class="rule">
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5">
+        <ol class="flex flex-col gap-4 text-sm text-ink-soft">
+            <li class="flex gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full
+                             border border-line font-display text-xs font-semibold text-ink-faint">1</span>
+                <span>Eliges un horario que te sirva.</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full
+                             border border-line font-display text-xs font-semibold text-ink-faint">2</span>
+                <span>Recibes la confirmacion en tu correo institucional.</span>
+            </li>
+            <li class="flex gap-3">
+                <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full
+                             border border-line font-display text-xs font-semibold text-ink-faint">3</span>
+                <span>Te conectas desde aqui a la hora acordada.</span>
+            </li>
+        </ol>
+    </div>
+
+    <hr class="rule">
+
+    <div class="flex items-start gap-2 px-4 py-3">
+        <i data-lucide="lock" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden="true"></i>
+        <p class="text-xs text-ink-faint">
+            Lo que hables en una sesion queda entre el profesional y tu.
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>

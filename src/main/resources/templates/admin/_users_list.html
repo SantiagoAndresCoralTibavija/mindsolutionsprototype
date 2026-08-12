@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!-- Filas del <tbody> de la tabla de cuentas -->
+<th:block th:fragment="rows">
+
+    <tr th:if="${users == null or users.isEmpty()}">
+        <td colspan="5" class="px-4 py-12 text-center">
+            <p class="text-sm font-medium text-ink">Todavia no hay cuentas</p>
+            <p class="mt-1 text-sm text-ink-faint">Cree la primera con "Nueva cuenta".</p>
+        </td>
+    </tr>
+
+    <!-- El administrador no se lista a si mismo. Comparacion por id, nunca por nombre. -->
+    <tr th:each="user : ${users}"
+        th:if="${currentUser == null or user.id != currentUser.id}"
+        class="border-b border-line last:border-0 transition-colors duration-150 ease-out-quart hover:bg-paper-raised">
+
+        <td class="td">
+            <div class="flex items-center gap-2.5">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full
+                             border border-line bg-paper-raised font-display text-xs font-semibold text-ink-soft"
+                      th:text="${#strings.toUpperCase(#strings.substring(user.user, 0, 1))}">J</span>
+                <span class="font-medium text-ink" th:text="${user.user}">Juan Perez</span>
+            </div>
+        </td>
+
+        <td class="td text-ink-soft" th:text="${user.email}">juan@universidad.edu.co</td>
+
+        <td class="td" th:switch="${user.role}">
+            <span th:case="'ROOT'" class="tag tag-clay">ROOT</span>
+            <span th:case="'ADMIN'" class="tag tag-clay">Administrador</span>
+            <span th:case="'PROFESSIONAL'" class="tag tag-sage">Profesional</span>
+            <span th:case="'TEACHER'" class="tag tag-plain">Docente</span>
+            <span th:case="*" class="tag tag-plain">Estudiante</span>
+        </td>
+
+        <!-- El estado nunca va solo por color: lleva icono y texto. -->
+        <td class="td">
+            <span th:if="${!user.bloqueado}" class="tag tag-sage">
+                <i data-lucide="check" class="h-3 w-3" aria-hidden="true"></i>
+                Activa
+            </span>
+            <span th:if="${user.bloqueado}" class="tag tag-danger">
+                <i data-lucide="lock" class="h-3 w-3" aria-hidden="true"></i>
+                Bloqueada
+            </span>
+        </td>
+
+        <td class="td">
+            <div class="flex items-center justify-end gap-1">
+                <button type="button" th:hx-get="@{/admin/users/{id}/edit(id=${user.id})}"
+                        hx-target="#modal-container" hx-swap="innerHTML"
+                        class="btn-icon" th:aria-label="'Editar a ' + ${user.user}" title="Editar">
+                    <i data-lucide="pencil" class="h-4 w-4"></i>
+                </button>
+
+                <form th:hx-post="@{/admin/users/{id}/toggle-lock(id=${user.id})}"
+                      hx-target="#users-table-body" hx-swap="innerHTML"
+                      th:attr="data-confirm=${user.bloqueado}
+                                 ? 'La persona volvera a poder entrar a la plataforma.'
+                                 : 'La persona no podra entrar hasta que la desbloquee.',
+                               data-confirm-title=${user.bloqueado} ? '¿Desbloquear cuenta?' : '¿Bloquear cuenta?',
+                               data-confirm-ok=${user.bloqueado} ? 'Desbloquear' : 'Bloquear'"
+                      class="inline">
+                    <div th:replace="~{shared/_csrf :: csrf}"></div>
+                    <button type="submit" class="btn-icon"
+                            th:aria-label="${user.bloqueado} ? 'Desbloquear cuenta' : 'Bloquear cuenta'"
+                            th:title="${user.bloqueado} ? 'Desbloquear' : 'Bloquear'">
+                        <i th:attr="data-lucide=${user.bloqueado ? 'lock-open' : 'lock'}" class="h-4 w-4"></i>
+                    </button>
+                </form>
+            </div>
+        </td>
+    </tr>
+
+</th:block>
+
+</body>
+</html>

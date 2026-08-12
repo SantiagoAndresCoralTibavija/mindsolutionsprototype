@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!--
+  Riel de navegacion. Vertical en escritorio, barra horizontal en movil.
+  El estado activo lo marca app.js con data-active; el indicador es una
+  pestania de cuaderno al costado, definida en input.css.
+-->
+<nav th:fragment="navigation" id="main-nav" aria-label="Secciones"
+     class="sheet shrink-0 flex items-center justify-between gap-2 px-3 py-2
+            md:w-[4.5rem] md:flex-col md:px-2 md:py-5">
+
+    <div class="flex items-center gap-1 md:flex-col md:gap-2">
+
+        <!-- La marca solo aparece en escritorio: en movil el espacio es del contenido. -->
+        <span class="hidden md:mb-3 md:block font-display text-lg font-semibold text-clay"
+              title="MindSolutions" aria-hidden="true">M</span>
+
+        <button type="button" hx-get="/dashboard/chatbot" hx-target="#main-content" hx-swap="innerHTML"
+                class="nav-button" data-nav="chatbot" data-active="true" aria-label="Hablar con Lia">
+            <i data-lucide="message-circle" class="h-5 w-5"></i>
+        </button>
+
+        <button type="button" hx-get="/dashboard/meditations" hx-target="#main-content" hx-swap="innerHTML"
+                class="nav-button" data-nav="meditations" aria-label="Meditaciones">
+            <i data-lucide="audio-lines" class="h-5 w-5"></i>
+        </button>
+
+        <button type="button" hx-get="/dashboard/sessions" hx-target="#main-content" hx-swap="innerHTML"
+                class="nav-button" data-nav="sessions" aria-label="Sesiones">
+            <i data-lucide="calendar" class="h-5 w-5"></i>
+        </button>
+
+        <span sec:authorize="hasRole('ROOT')" class="mx-1 h-6 w-px bg-line md:mx-0 md:my-1 md:h-px md:w-6"></span>
+
+        <button sec:authorize="hasRole('ROOT')" type="button"
+                hx-get="/dashboard/admin" hx-target="#main-content" hx-swap="innerHTML"
+                class="nav-button" data-nav="admin" aria-label="Administracion">
+            <i data-lucide="sliders-horizontal" class="h-5 w-5"></i>
+        </button>
+    </div>
+
+    <!-- Cuenta -->
+    <div x-data="{ open: false }" class="relative">
+        <button type="button" @click="open = !open"
+                :aria-expanded="open.toString()"
+                class="flex h-9 w-9 items-center justify-center rounded-full border border-line
+                       bg-paper-sunken font-display text-sm font-semibold text-ink-soft
+                       transition-colors duration-200 ease-out-quart hover:border-line-strong hover:text-ink"
+                aria-label="Tu cuenta">
+            <span th:text="${#strings.toUpperCase(#strings.substring(#authentication.principal.username, 0, 1))}">M</span>
+        </button>
+
+        <div x-show="open" @click.away="open = false" x-cloak
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-100"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0"
+             class="sheet lift absolute bottom-11 right-0 z-30 w-56 overflow-hidden p-1
+                    md:bottom-0 md:left-12 md:right-auto">
+
+            <p class="truncate px-3 pb-2 pt-2 text-xs text-ink-faint"
+               th:text="${#authentication.principal.username}">correo@universidad.edu.co</p>
+
+            <hr class="rule">
+
+            <form th:action="@{/logout}" method="post" class="pt-1">
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+                <button type="submit"
+                        class="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm
+                               text-ink-soft transition-colors duration-150 ease-out-quart
+                               hover:bg-paper-sunken hover:text-ink">
+                    <i data-lucide="log-out" class="h-4 w-4"></i>
+                    Cerrar sesion
+                </button>
+            </form>
+        </div>
+    </div>
+
+</nav>
+
+</body>
+</html>

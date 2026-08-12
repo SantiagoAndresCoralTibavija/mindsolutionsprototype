@@ -1,0 +1,3 @@
+@echo off
+echo Compilando Tailwind en modo watch...
+npm run css:watch

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Sesiones.
+
+  Antes esta pantalla mostraba citas inventadas ("Dr. Ana Torres", "Psic. Carlos
+  Ruiz") escritas a mano en el HTML. Con usuarios reales eso es enganioso: un
+  estudiante podria creer que tiene una cita agendada que no existe. Hasta que
+  haya backend, la pantalla dice la verdad y ofrece la salida util.
+-->
+<div th:fragment="page" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div hx-get="/dashboard/right-panel/sessions" hx-trigger="load"
+         hx-target="#right-panel" hx-swap="innerHTML"></div>
+
+    <header class="px-4 pb-4 pt-5 sm:px-6">
+        <h1 class="text-xl">Sesiones</h1>
+        <p class="mt-1 text-sm text-ink-soft">Acompaniamiento con un profesional.</p>
+    </header>
+
+    <hr class="rule">
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-4 py-8 sm:px-6">
+        <div class="measure">
+
+            <h2 class="text-lg">Todavia no puedes agendar desde aqui</h2>
+
+            <p class="mt-3 text-ink-soft">
+                Estamos conectando la plataforma con el area de bienestar de la
+                universidad. Mientras tanto, si necesitas hablar con alguien puedes
+                acercarte directamente o escribir al correo de bienestar estudiantil.
+            </p>
+
+            <div class="well mt-6 rounded-xl p-4">
+                <p class="overline">Si es urgente</p>
+                <p class="mt-2 text-sm text-ink-soft">
+                    En Colombia la <span class="font-medium text-ink">Linea 106</span> atiende
+                    salud mental las 24 horas, gratis y de forma confidencial. Tambien puedes
+                    marcar al <span class="font-medium text-ink">123</span>.
+                </p>
+            </div>
+
+            <p class="mt-6 text-sm text-ink-faint">
+                Cuando el modulo este listo vas a poder ver los horarios disponibles y
+                reservar sin salir de aqui.
+            </p>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

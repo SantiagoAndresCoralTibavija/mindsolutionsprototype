@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Modales de cuenta. El cierre lo maneja app.js:
+    data-modal        marca el overlay (click en el fondo cierra)
+    data-close-modal  cierra desde un boton
+
+  Las opciones de rol vienen del enum Role (${roles}), no escritas a mano:
+  agregar un valor al enum lo hace aparecer solo en los dos formularios.
+-->
+
+<th:block th:fragment="create">
+    <div data-modal class="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6"
+         role="dialog" aria-modal="true" aria-labelledby="create-title">
+
+        <div class="absolute inset-0 bg-ink opacity-40"></div>
+
+        <div class="sheet lift rise relative w-full max-w-md overflow-hidden rounded-b-none sm:rounded-b-sheet">
+
+            <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
+                <h2 id="create-title" class="text-lg">Nueva cuenta</h2>
+                <button type="button" data-close-modal class="btn-icon" aria-label="Cerrar">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <form hx-post="/admin/users" hx-target="#users-table-body" hx-swap="innerHTML"
+                  hx-disabled-elt="find button"
+                  class="flex flex-col gap-4 px-5 py-5">
+
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+                <div>
+                    <label for="create-name" class="label">Nombre</label>
+                    <input type="text" id="create-name" name="name" required class="field"
+                           placeholder="Como se mostrara en la plataforma">
+                </div>
+
+                <div>
+                    <label for="create-email" class="label">Correo</label>
+                    <input type="email" id="create-email" name="email" required class="field"
+                           placeholder="nombre@universidad.edu.co">
+                </div>
+
+                <div>
+                    <label for="create-password" class="label">Contrasena inicial</label>
+                    <input type="password" id="create-password" name="password" required class="field">
+                </div>
+
+                <div>
+                    <label for="create-role" class="label">Rol</label>
+                    <select id="create-role" name="role" required class="field">
+                        <option value="">Seleccionar...</option>
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}">STUDENT</option>
+                    </select>
+                </div>
+
+                <div class="mt-1 flex justify-end gap-2">
+                    <button type="button" data-close-modal class="btn btn-quiet">Cancelar</button>
+                    <button type="submit" class="btn btn-solid">Crear cuenta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+
+<th:block th:fragment="edit">
+    <div data-modal class="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6"
+         role="dialog" aria-modal="true" aria-labelledby="edit-title">
+
+        <div class="absolute inset-0 bg-ink opacity-40"></div>
+
+        <div class="sheet lift rise relative w-full max-w-md overflow-hidden rounded-b-none sm:rounded-b-sheet">
+
+            <div class="flex items-center justify-between gap-3 border-b border-line px-5 py-4">
+                <div class="min-w-0">
+                    <h2 id="edit-title" class="text-lg">Editar cuenta</h2>
+                    <p class="truncate text-xs text-ink-faint" th:text="${user.email}">correo@universidad.edu.co</p>
+                </div>
+                <button type="button" data-close-modal class="btn-icon shrink-0" aria-label="Cerrar">
+                    <i data-lucide="x" class="h-4 w-4"></i>
+                </button>
+            </div>
+
+            <form th:hx-post="@{/admin/users/{id}(id=${user.id})}"
+                  hx-target="#users-table-body" hx-swap="innerHTML"
+                  hx-disabled-elt="find button"
+                  class="flex flex-col gap-4 px-5 py-5">
+
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+                <div>
+                    <label for="edit-name" class="label">Nombre</label>
+                    <input type="text" id="edit-name" name="name" required th:value="${user.user}" class="field">
+                </div>
+
+                <div>
+                    <label for="edit-email" class="label">Correo</label>
+                    <input type="email" id="edit-email" name="email" required th:value="${user.email}" class="field">
+                </div>
+
+                <div>
+                    <label for="edit-password" class="label">Nueva contrasena</label>
+                    <input type="password" id="edit-password" name="password" class="field"
+                           placeholder="Dejar vacio para no cambiarla">
+                </div>
+
+                <div>
+                    <label for="edit-role" class="label">Rol</label>
+                    <select id="edit-role" name="role" required class="field">
+                        <option th:each="r : ${roles}" th:value="${r}" th:text="${r}"
+                                th:selected="${user.role != null and user.role.name() == r.name()}">STUDENT</option>
+                    </select>
+                </div>
+
+                <div class="mt-1 flex justify-end gap-2">
+                    <button type="button" data-close-modal class="btn btn-quiet">Cancelar</button>
+                    <button type="submit" class="btn btn-solid">Guardar cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</th:block>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Ingreso')}"></head>
+
+<body class="h-full">
+
+<!--
+  Composicion asimetrica en dos partes: a la izquierda una pagina de papel con
+  una sola frase, a la derecha el formulario. En movil solo queda el formulario.
+  Sin video de fondo ni fotografia de stock: el caracter lo pone el papel.
+-->
+<div class="grid min-h-full lg:grid-cols-[1.1fr_1fr]">
+
+    <!-- Lado editorial -->
+    <section class="relative hidden flex-col justify-between bg-paper-sunken px-12 py-14 lg:flex">
+
+        <p class="font-display text-lg font-semibold text-clay">MindSolutions</p>
+
+        <div class="measure">
+            <h1 class="text-3xl">
+                Un lugar para bajar las revoluciones.
+            </h1>
+            <p class="mt-5 text-lg text-ink-soft">
+                Habla con Lia cuando lo necesites, medita cuando el dia pese, y
+                agenda con un profesional cuando quieras dar el siguiente paso.
+            </p>
+        </div>
+
+        <p class="text-xs text-ink-faint">
+            Bienestar estudiantil · Universidad
+        </p>
+    </section>
+
+    <!-- Formulario -->
+    <section class="flex flex-col justify-center px-6 py-12 sm:px-10 lg:px-14">
+
+        <div class="w-full max-w-sm">
+
+            <p class="font-display text-lg font-semibold text-clay lg:hidden">MindSolutions</p>
+
+            <h2 class="rise rise-1 mt-6 text-2xl lg:mt-0">Hola de nuevo</h2>
+            <p class="rise rise-1 mt-2 text-ink-soft">Entra para seguir donde ibas.</p>
+
+            <form class="rise rise-2 mt-8 flex flex-col gap-4"
+                  th:action="@{/login}" method="post" th:object="${LoginDTO}"
+                  hx-post="/login" hx-target="#alert-container" hx-swap="innerHTML"
+                  hx-disabled-elt="find button"
+                  x-data="{ show: false }">
+
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+                <div>
+                    <label for="email" class="label">Correo institucional</label>
+                    <input id="email" name="email" type="email" autocomplete="email" required
+                           th:field="*{email}" class="field" placeholder="nombre@universidad.edu.co">
+                </div>
+
+                <div>
+                    <label for="password" class="label">Contrasena</label>
+                    <div class="relative">
+                        <input id="password" name="password" autocomplete="current-password" required
+                               :type="show ? 'text' : 'password'"
+                               th:field="*{password}" class="field pr-11">
+                        <button type="button" @click="show = !show"
+                                class="btn-icon absolute right-1 top-1/2 h-8 w-8 -translate-y-1/2"
+                                :aria-label="show ? 'Ocultar contrasena' : 'Mostrar contrasena'">
+                            <i data-lucide="eye" class="h-4 w-4" x-show="!show"></i>
+                            <i data-lucide="eye-off" class="h-4 w-4" x-show="show" x-cloak></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="alert-container" aria-live="polite"></div>
+
+                <button type="submit" class="btn btn-solid mt-1 w-full">Entrar</button>
+            </form>
+
+            <p class="rise rise-3 mt-8 text-sm text-ink-soft">
+                ¿Primera vez por aqui?
+                <a th:href="@{/registro}"
+                   class="font-medium text-clay underline decoration-clay-line underline-offset-4
+                          transition-colors duration-150 ease-out-quart hover:decoration-clay">
+                    Crea tu cuenta
+                </a>
+            </p>
+        </div>
+    </section>
+
+</div>
+
+<div th:replace="~{layout/base :: scripts}"></div>
+
+<!-- Mensaje de registro exitoso, si viene de vuelta del registro -->
+<div th:if="${successMessage}" id="flash-success" hidden th:attr="data-message=${successMessage}"></div>
+
+</body>
+</html>

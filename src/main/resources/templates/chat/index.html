@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--
+  Pantalla de inicio del chat.
+
+  Aqui esta la friccion mas alta de toda la app: escribir el primer mensaje y
+  darle enviar. Por eso la composicion es sobria y alineada a la izquierda,
+  sin ilustraciones ni promesas, y ofrece frases de arranque para que nadie
+  se quede mirando un campo vacio sin saber como empezar.
+-->
+<div th:fragment="page" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div th:hx-get="@{/dashboard/right-panel/chatbot}" hx-trigger="load"
+         hx-target="#right-panel" hx-swap="innerHTML"></div>
+
+    <div class="flex min-h-0 flex-1 flex-col justify-center overflow-y-auto px-6 py-10 sm:px-10 lg:px-14">
+
+        <div class="measure w-full">
+
+            <p class="overline rise rise-1" th:text="${greeting}">Buenas noches</p>
+
+            <h1 class="rise rise-2 mt-3 text-2xl sm:text-3xl">
+                Soy Lia. Cuentame como vas.
+            </h1>
+
+            <p class="rise rise-2 mt-4 text-ink-soft">
+                Escribe lo que tengas en la cabeza, sin ordenarlo. No hay respuestas
+                correctas y nadie mas puede abrir esta conversacion.
+            </p>
+
+            <form class="rise rise-3 mt-8"
+                  hx-post="/ai/chat/new"
+                  hx-target="#main-content"
+                  hx-swap="innerHTML"
+                  hx-indicator="#chat-starting"
+                  hx-disabled-elt="find input, find button">
+
+                <div th:replace="~{shared/_csrf :: csrf}"></div>
+
+                <label for="new-chat-input" class="sr-only">Tu primer mensaje para Lia</label>
+
+                <div class="flex flex-col gap-2 sm:flex-row">
+                    <input type="text" name="prompt" id="new-chat-input" required autocomplete="off"
+                           placeholder="Hoy me senti..."
+                           class="field flex-1 text-chat">
+
+                    <button type="submit" class="btn btn-solid shrink-0">
+                        Empezar
+                        <i data-lucide="arrow-right" class="h-4 w-4"></i>
+                    </button>
+                </div>
+            </form>
+
+            <!--
+              Frases de arranque. Rellenan el campo, no envian: la persona
+              siempre revisa y ajusta antes de mandar nada.
+            -->
+            <div class="rise rise-3 mt-6">
+                <p class="text-sm text-ink-faint">O empieza por aqui</p>
+
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <button type="button" class="starter" data-starter="No he podido dormir bien estos dias">
+                        No he podido dormir bien
+                    </button>
+                    <button type="button" class="starter" data-starter="Estoy con mucha ansiedad por un parcial">
+                        Ansiedad por un parcial
+                    </button>
+                    <button type="button" class="starter" data-starter="Me siento solo en la universidad">
+                        Me siento solo aqui
+                    </button>
+                    <button type="button" class="starter" data-starter="No se por donde empezar a contar lo que me pasa">
+                        No se por donde empezar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Indicador de creacion de la conversacion -->
+            <div id="chat-starting" class="htmx-indicator mt-8 flex items-center gap-3 text-sm text-ink-soft">
+                <span class="flex gap-1" aria-hidden="true">
+                    <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:0ms"></span>
+                    <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:180ms"></span>
+                    <span class="breath h-1.5 w-1.5 rounded-full bg-clay" style="animation-delay:360ms"></span>
+                </span>
+                Abriendo la conversacion...
+            </div>
+
+        </div>
+    </div>
+
+    <!--
+      Nota al pie: Lia acompania, no diagnostica. Decirlo desde el principio
+      evita una expectativa que la herramienta no puede sostener.
+    -->
+    <footer class="border-t border-line px-6 py-3 sm:px-10 lg:px-14">
+        <p class="text-xs text-ink-faint">
+            Lia acompania y ayuda a ordenar ideas. No reemplaza a un profesional.
+            Si necesitas atencion, puedes agendar una sesion desde el panel.
+        </p>
+    </footer>
+
+</div>
+
+</body>
+</html>

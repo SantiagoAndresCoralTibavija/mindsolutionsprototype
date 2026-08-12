@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="panel" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div class="px-4 pb-3 pt-4">
+        <h2 class="text-sm font-semibold text-ink">Estado del sistema</h2>
+    </div>
+
+    <hr class="rule">
+
+    <!--
+      Cifras sin adornos: numero grande en la display, etiqueta debajo,
+      separadas por una regla. Nada de tarjetas con sombra ni iconos de colores.
+    -->
+    <dl class="divide-y divide-line">
+        <div class="px-4 py-4">
+            <dd class="font-display text-2xl font-semibold text-ink" th:text="${totalUsers} ?: 0">0</dd>
+            <dt class="mt-0.5 text-xs text-ink-faint">Personas registradas</dt>
+        </div>
+        <div class="px-4 py-4">
+            <dd class="font-display text-2xl font-semibold text-ink" th:text="${totalConversations} ?: 0">0</dd>
+            <dt class="mt-0.5 text-xs text-ink-faint">Conversaciones abiertas</dt>
+        </div>
+    </dl>
+
+    <hr class="rule">
+
+    <div class="flex items-start gap-2 px-4 py-3">
+        <i data-lucide="shield" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden="true"></i>
+        <p class="text-xs text-ink-faint">
+            La administracion no da acceso al contenido de las conversaciones.
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>

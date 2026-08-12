@@ -1,0 +1,25 @@
+{
+  "name": "mindsolutionsspring",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Assets de front de MindSolutions",
+  "scripts": {
+    "vendor": "node scripts/copy-vendor.js",
+    "css": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/output.css --minify",
+    "css:watch": "tailwindcss -i ./src/main/resources/static/css/input.css -o ./src/main/resources/static/css/output.css --watch",
+    "build": "npm run vendor && npm run css"
+  },
+  "dependencies": {
+    "@fontsource-variable/petrona": "^5.3.0",
+    "@fontsource/alegreya-sans": "^5.3.0",
+    "alpinejs": "^3.14.9",
+    "htmx.org": "^2.0.4",
+    "lucide": "^0.469.0",
+    "sweetalert2": "^11.15.10"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  }
+}

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="page" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div hx-get="/dashboard/right-panel/admin" hx-trigger="load"
+         hx-target="#right-panel" hx-swap="innerHTML"></div>
+
+    <header class="px-4 pb-4 pt-5 sm:px-6">
+        <h1 class="text-xl">Administracion</h1>
+        <p class="mt-1 text-sm text-ink-soft">Gestion de cuentas y contenido.</p>
+    </header>
+
+    <!-- Pestanias. El cambio lo maneja app.js via data-admin-tab. -->
+    <div class="flex gap-1 border-b border-line px-4 sm:px-6" role="tablist">
+        <button type="button" data-admin-tab="users" id="tab-users" class="admin-tab" data-active="true">
+            Cuentas
+        </button>
+        <button type="button" data-admin-tab="meditations" id="tab-meditations" class="admin-tab">
+            Meditaciones
+        </button>
+        <button type="button" data-admin-tab="sessions" id="tab-sessions" class="admin-tab">
+            Sesiones
+        </button>
+    </div>
+
+    <div class="min-h-0 flex-1 overflow-y-auto px-4 py-5 sm:px-6">
+
+        <!-- Cuentas -->
+        <section id="admin-users" class="admin-content">
+
+            <div class="mb-4 flex items-center justify-between gap-3">
+                <p class="text-sm text-ink-soft">Personas con acceso a la plataforma.</p>
+                <button type="button" hx-get="/admin/users/create"
+                        hx-target="#modal-container" hx-swap="innerHTML"
+                        class="btn btn-outline shrink-0">
+                    <i data-lucide="plus" class="h-4 w-4"></i>
+                    Nueva cuenta
+                </button>
+            </div>
+
+            <div class="well overflow-x-auto rounded-xl">
+                <table class="w-full min-w-[46rem] border-collapse text-sm">
+                    <thead>
+                    <tr class="border-b border-line">
+                        <th scope="col" class="th">Nombre</th>
+                        <th scope="col" class="th">Correo</th>
+                        <th scope="col" class="th">Rol</th>
+                        <th scope="col" class="th">Estado</th>
+                        <th scope="col" class="th text-right">Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody id="users-table-body" hx-get="/admin/users/list" hx-trigger="load" hx-swap="innerHTML">
+                    <tr>
+                        <td colspan="5" class="px-4 py-10 text-center text-sm text-ink-faint">
+                            Cargando cuentas...
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!--
+          Meditaciones y sesiones no tienen backend todavia. No se dispara
+          ningun hx-get contra endpoints inexistentes: antes fallaban con 404
+          en cada visita al panel.
+        -->
+        <section id="admin-meditations" class="admin-content hidden">
+            <div class="measure py-10">
+                <h2 class="text-lg">Meditaciones</h2>
+                <p class="mt-2 text-ink-soft">
+                    Aqui se van a subir y organizar las sesiones de audio. El modulo
+                    todavia no tiene backend.
+                </p>
+            </div>
+        </section>
+
+        <section id="admin-sessions" class="admin-content hidden">
+            <div class="measure py-10">
+                <h2 class="text-lg">Sesiones</h2>
+                <p class="mt-2 text-ink-soft">
+                    Aqui se van a administrar las citas con profesionales. El modulo
+                    todavia no tiene backend.
+                </p>
+            </div>
+        </section>
+
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{layout/base :: head('Panel')}"></head>
+
+<body class="h-full">
+
+<!--
+  Estructura de tres columnas. En movil la navegacion pasa a barra inferior y
+  el panel derecho desaparece (su contenido es secundario y siempre alcanzable
+  desde el centro): se adapta la interfaz, no se amputa.
+-->
+<div class="h-full mx-auto flex max-w-[92rem] flex-col gap-3 p-3
+            md:flex-row md:gap-5 md:p-5 lg:p-6">
+
+    <div th:replace="~{dashboard/_navigation :: navigation}"></div>
+
+    <main id="main-content" class="min-h-0 flex-1 order-first md:order-none">
+        <div th:replace="~{chat/index :: page}"></div>
+    </main>
+
+    <aside id="right-panel" class="hidden w-[19rem] shrink-0 lg:block">
+        <div th:replace="~{chat/_sidebar :: panel}"></div>
+    </aside>
+
+</div>
+
+<!-- Aqui htmx inyecta los modales -->
+<div id="modal-container"></div>
+
+<div th:replace="~{layout/base :: scripts}"></div>
+
+</body>
+</html>

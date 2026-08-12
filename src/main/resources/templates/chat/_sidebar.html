@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="panel" class="sheet flex h-full flex-col overflow-hidden">
+
+    <div class="flex items-center justify-between gap-2 px-4 pb-3 pt-4">
+        <h2 class="text-sm font-semibold text-ink">Tus conversaciones</h2>
+        <button type="button" hx-get="/dashboard/chatbot" hx-target="#main-content" hx-swap="innerHTML"
+                class="btn-icon" aria-label="Nueva conversacion" title="Nueva conversacion">
+            <i data-lucide="plus" class="h-4 w-4"></i>
+        </button>
+    </div>
+
+    <hr class="rule">
+
+    <div class="min-h-0 flex-1 overflow-y-auto p-2">
+
+        <!--
+          Estado vacio que ensenia en vez de anunciar el vacio: dice que pasa
+          cuando escribes y despeja la duda obvia (quien lo lee).
+        -->
+        <div th:if="${conversations == null or conversations.isEmpty()}"
+             class="px-3 py-8 text-sm">
+            <p class="text-ink-soft">Todavia no has escrito nada.</p>
+            <p class="mt-2 text-ink-faint">
+                Cada vez que empieces una conversacion se guarda aqui, con un titulo
+                para que la reconozcas despues. Solo tu puedes verlas.
+            </p>
+        </div>
+
+        <div th:each="conv : ${conversations}"
+             th:hx-get="@{/dashboard/chatbot/{uuid}(uuid=${conv.uuid})}"
+             hx-target="#main-content"
+             hx-swap="innerHTML"
+             th:attr="data-active=${activeConversationUuid != null and activeConversationUuid == conv.uuid}"
+             class="conv-item group">
+
+            <p class="truncate text-sm font-medium text-ink"
+               th:text="${conv.title} ?: 'Conversacion sin titulo'">Conversacion sin titulo</p>
+
+            <p class="mt-0.5 truncate text-xs text-ink-faint"
+               th:text="${#temporals.format(conv.lastMessageSentAt, 'd MMM · HH:mm')}">4 mar · 21:04</p>
+        </div>
+    </div>
+
+    <hr class="rule">
+
+    <!--
+      Nota de privacidad. Es la duda que mas frena a alguien antes de escribir
+      algo delicado, asi que se responde sin que la tengan que buscar.
+    -->
+    <div class="flex items-start gap-2 px-4 py-3">
+        <i data-lucide="lock" class="mt-0.5 h-3.5 w-3.5 shrink-0 text-ink-faint" aria-hidden="true"></i>
+        <p class="text-xs text-ink-faint">
+            Solo tu puedes abrir tus conversaciones desde la aplicacion. Ni docentes
+            ni administradores tienen acceso a ellas.
+        </p>
+    </div>
+
+</div>
+
+</body>
+</html>
